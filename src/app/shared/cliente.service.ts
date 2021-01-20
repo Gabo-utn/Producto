@@ -21,7 +21,30 @@ export class ClienteService {
             .pipe(catchError(this.handleError));
   }
 
-  handleError(err: Response) {
-    return of([]);
+
+  delete(id: number): Observable<any> {
+    return this.http.delete
+      (`${this.url}/${id}`)
+      .pipe(catchError(this.handleError));
   }
-}
+
+  put(cliente: Cliente): Observable<any> {
+    let payload = JSON.stringify(cliente);
+    return this.http.put<Cliente>(this.url, payload)
+      .pipe(catchError(this.handleError));
+  }
+
+  post(cliente: Cliente): Observable<any> {
+    let payload = JSON.stringify(cliente);
+    return this.http.post<Cliente>(this.url, payload)
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      return of(result as T);
+    }
+  }
+
+  }

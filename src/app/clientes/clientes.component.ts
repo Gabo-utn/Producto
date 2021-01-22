@@ -7,14 +7,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import {Cliente} from '../shared/cliente';
 import {ClienteService} from '../shared/cliente.service';
 import { ConfirmarComponent } from '../confirmar/confirmar.component';
+
 @Component({
   selector: 'app-clientes',
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.css']
 })
 export class ClientesComponent implements OnInit, AfterViewInit {
-  clientes: Cliente[] = [];
-  editando = false;
+
+  clientes : Cliente [] = [];
   clienteSelected = new Cliente();
 
   dataSource = new MatTableDataSource<Cliente>();
@@ -35,16 +36,16 @@ export class ClientesComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  columnas : string[] = ['clienId', 'clienNombre', 'clienDireccion', 'acciones'];
+  columnas : string[] = ['cliId', 'cliNombre', 'cliDireccion', 'acciones'];
 
   ngOnInit(): void {
 
     this.form = this.formBuilder.group({
-      clienId: [''],
-      clienNombre: ['', Validators.required],
-      clienDireccion: ['', Validators.required],
-      clienBorrado: [''],
-      clienFechaAlta: ['']
+      cliId: [''],
+      cliNombre: ['', Validators.required],
+      cliDireccion: ['', Validators.required],
+      cliBorrado: [''],
+      cliFechaAlta: ['']
     });
 
     this.cS.get().subscribe(

@@ -1,7 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
+
 
 import { Cliente } from './cliente';
 
@@ -13,14 +14,12 @@ export class ClienteService {
   private url = 'http://localhost:8888/cliente.php';
 
   constructor(
-    private http: HttpClient,
+    private http: HttpClient
   ) { }
 
-  get(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(this.url)
-            .pipe(catchError(this.handleError));
+  get(): Observable<any> {
+    return this.http.get(this.url);
   }
-
 
   delete(id: number): Observable<any> {
     return this.http.delete
@@ -44,7 +43,7 @@ export class ClienteService {
     return (error: any): Observable<T> => {
       console.error(error);
       return of(result as T);
-    }
+    };
   }
 
-  }
+}

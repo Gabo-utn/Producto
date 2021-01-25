@@ -25,7 +25,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   items: Pedido[] = [];
   seleccionado = new Pedido();
 
-  columnas: string[] = ['pediId', 'pediFecha', 'cliNombre', 'acciones'];
+  columnas: string[] = ['pediId', 'pediFecha', 'clienNombre', 'acciones'];
   dataSource = new MatTableDataSource<Pedido>();
 
 
@@ -55,10 +55,10 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.form = this.formBuilder.group({
       pediId: [''],
       pediFecha: ['', Validators.required],
-      pediCliId: ['', Validators.required],
+      pediClienId: ['', Validators.required],
       pediFechaAlta: [''],
       pediBorrado: [''],
-      cliNombre:['']
+      clienNombre:['']
     });
 
     this.pedidoService.get().subscribe(
@@ -143,7 +143,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     } else {
       this.pedidoService.post(this.seleccionado)
         .subscribe((pedido: Pedido) => {
-          pedido.cliNombre = this.clientes.find(c => c.cliId == pedido.pediCliId)!.cliNombre;
+          pedido.clienNombre = this.clientes.find(c => c.clienId == pedido.pediClienId)!.clienNombre;
           this.items.push(pedido);
           this.mostrarFormulario = false;
           this.actualizarTabla();

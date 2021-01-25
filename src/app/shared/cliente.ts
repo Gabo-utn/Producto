@@ -1,8 +1,8 @@
 export class Cliente {
-  cliId: number = 0;
-  cliNombre: string = '';
-  cliApellido: string = '';
-  cliDireccion: string = '';
-  cliFechaAlta: Date = new Date();
-  cliBorrado: boolean = false;
+  clienId: number = 0;
+  clienNombre: string = '';
+  clienApellido: string = '';
+  clienDireccion: string = '';
+  clienFechaAlta: Date = new Date();
+  clienBorrado: boolean = false;
 }

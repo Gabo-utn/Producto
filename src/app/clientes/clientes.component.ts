@@ -1,3 +1,4 @@
+import { ClienteService } from './../shared/cliente.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -7,7 +8,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 import {Cliente} from '../shared/cliente';
-import {ClienteService} from '../shared/cliente.service';
+
 import { ConfirmarComponent } from '../confirmar/confirmar.component';
 
 @Component({
@@ -25,7 +26,7 @@ export class ClientesComponent implements OnInit, AfterViewInit {
   mostrarForm = false;
   form = new FormGroup({});
 
-  constructor(private cS : ClienteService,
+  constructor(private clienteservice : ClienteService,
      private formBuilder: FormBuilder,
       public dialog: MatDialog) { }
 
@@ -35,20 +36,20 @@ export class ClientesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
   }
-  columnas : string[] = ['cliId', 'cliNombre', 'cliDireccion', 'acciones'];
+  columnas : string[] = ['clienId', 'clienNombre', 'clienDireccion', 'acciones'];
 
 
   ngOnInit(): void {
 
     this.form = this.formBuilder.group({
-      cliId: [''],
-      cliNombre: ['', Validators.required],
-      cliDireccion: ['', Validators.required],
-      cliBorrado: [''],
-      cliFechaAlta: ['']
+      clienId: [''],
+      clienNombre: ['', Validators.required],
+      clienDireccion: ['', Validators.required],
+      clienBorrado: [''],
+      clienFechaAlta: ['']
     });
 
-    this.cS.get().subscribe(
+    this.clienteservice.get().subscribe(
       (clientes) => {
         this.clientes = clientes;
         this.actualizarTabla();
@@ -75,13 +76,13 @@ export class ClientesComponent implements OnInit, AfterViewInit {
       console.log(`Dialog result: ${result}`);
 
       if (result) {
-        this.cS.delete(row.cliId)
+        this.clienteservice.delete(row.clienId)
           .subscribe(() => {
 
             //this.items = this.items.filter( x => x !== row);
 
             this.clientes = this.clientes.filter((cliente) => {
-              if (cliente.cliId != row.cliId) {
+              if (cliente.clienId != row.clienId) {
                 return true
               } else {
                 return false
@@ -108,14 +109,14 @@ export class ClientesComponent implements OnInit, AfterViewInit {
     Object.assign(this.clienteSelected, this.form.value);
 
 
-    if (this.clienteSelected.cliId) {
-      this.cS.put(this.clienteSelected)
+    if (this.clienteSelected.clienId) {
+      this.clienteservice.put(this.clienteSelected)
         .subscribe((cliente) => {
           this.mostrarForm = false;
         });
 
     } else {
-      this.cS.post(this.clienteSelected)
+      this.clienteservice.post(this.clienteSelected)
         .subscribe((cliente) => {
           this.clientes.push(cliente);
           this.mostrarForm = false;

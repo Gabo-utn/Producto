@@ -19,9 +19,9 @@
                     <td mat-cell *matCellDef="let pedido"> {{ pedido.pediFecha | date: 'DD/MM/AA' }} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="cliNombre">
+                <ng-container matColumnDef="clienNombre">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
-                    <td mat-cell *matCellDef="let pedido"> {{pedido.cliNombre}} </td>
+                    <td mat-cell *matCellDef="let pedido"> {{pedido.clienNombre}} </td>
                 </ng-container>
 
 
@@ -65,9 +65,9 @@
                 <div>
                     <mat-form-field appearance="outline">
                         <mat-label>Nombre Cliente</mat-label>
-                        <mat-select formControlName="pediCliId" required>
-                            <mat-option *ngFor="let cliente of clientes" [value]="cliente.cliId">
-                                {{cliente.cliNombre}}
+                        <mat-select formControlName="pediClienId" required>
+                            <mat-option *ngFor="let cliente of clientes" [value]="cliente.clienId">
+                                {{cliente.clienNombre}}
                             </mat-option>
                         </mat-select>
                         <mat-error>Selecciona una opcion valida</mat-error>

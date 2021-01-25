@@ -1,9 +1,11 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+
 import {Cliente} from '../shared/cliente';
 import {ClienteService} from '../shared/cliente.service';
 import { ConfirmarComponent } from '../confirmar/confirmar.component';
@@ -23,20 +25,18 @@ export class ClientesComponent implements OnInit, AfterViewInit {
   mostrarForm = false;
   form = new FormGroup({});
 
-  constructor(private cS : ClienteService, private formBuilder: FormBuilder, public dialog: MatDialog) { }
+  constructor(private cS : ClienteService,
+     private formBuilder: FormBuilder,
+      public dialog: MatDialog) { }
 
   @ViewChild(MatSort) sort!: MatSort;
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
   }
-
   columnas : string[] = ['cliId', 'cliNombre', 'cliDireccion', 'acciones'];
+
 
   ngOnInit(): void {
 
@@ -136,6 +136,9 @@ export class ClientesComponent implements OnInit, AfterViewInit {
   cancelar(){
     this.mostrarForm = false;
   }
-
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
 }

@@ -25,7 +25,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   items: Pedido[] = [];
   seleccionado = new Pedido();
 
-  columnas: string[] = ['pediId', 'pediFecha', 'clienNombre', 'acciones'];
+  columnas: string[] = ['pediId', 'pediFecha', 'cliNombre', 'acciones'];
   dataSource = new MatTableDataSource<Pedido>();
 
 
@@ -58,7 +58,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
       pediCliId: ['', Validators.required],
       pediFechaAlta: [''],
       pediBorrado: [''],
-      clienNombre:['']
+      cliNombre:['']
     });
 
     this.pedidoService.get().subscribe(
@@ -73,6 +73,14 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         this.clientes = clientes;
       }
     )
+  }
+  mostrar = false;
+  mostrarDetalle():Boolean{
+    if(this.seleccionado.pediId){
+      return this.mostrar = true;
+    }else{
+      return this.mostrar = false;
+    }
   }
 
   actualizarTabla() {
@@ -123,9 +131,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
     Object.assign(this.seleccionado, this.form.value);
 
-    // si el formulario es diferente asignar uno por uno...
-    //this.seleccionado.prodDescripcion = this.form.value.prodDescripcion;
-    //this.seleccionado.prodPrecio = this.form.value.prodPrecio;
+
 
 
     if (this.seleccionado.pediId) {
@@ -137,7 +143,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     } else {
       this.pedidoService.post(this.seleccionado)
         .subscribe((pedido: Pedido) => {
-          pedido.clienNombre = this.clientes.find(c => c.cliId == pedido.pediClienId)!.cliNombre;
+          pedido.cliNombre = this.clientes.find(c => c.cliId == pedido.pediCliId)!.cliNombre;
           this.items.push(pedido);
           this.mostrarFormulario = false;
           this.actualizarTabla();

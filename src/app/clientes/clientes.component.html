@@ -2,24 +2,24 @@
 
   <mat-form-field>
     <mat-label>Busqueda</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo: Juan" #input>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo: JEAN CARLOS" #input>
   </mat-form-field>
 
   <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
-    <ng-container matColumnDef="clienId">
+    <ng-container matColumnDef="cliId">
       <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let cliente"> {{cliente.clienId}} </td>
+      <td mat-cell *matCellDef="let cliente"> {{cliente.cliId}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="clienNombre">
+    <ng-container matColumnDef="cliNombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-      <td mat-cell *matCellDef="let cliente"> {{cliente.clienNombre}} </td>
+      <td mat-cell *matCellDef="let cliente"> {{cliente.cliNombre}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="clienDireccion">
+    <ng-container matColumnDef="cliDireccion">
       <th mat-header-cell *matHeaderCellDef> Dirección </th>
-      <td mat-cell *matCellDef="let cliente"> {{cliente.clienDireccion}} </td>
+      <td mat-cell *matCellDef="let cliente"> {{cliente.cliDireccion}} </td>
     </ng-container>
 
     <ng-container matColumnDef="acciones">
@@ -46,21 +46,21 @@
 
 <div *ngIf="mostrarForm">
   <br>
-    <mat-card style="width: 50%;">
+    <mat-card style="width: 100%;">
         <form [formGroup]="form">
             <div>
                 <div>
                     <label>Id: </label>
                     <ul>
-                        <li *ngIf="this.form.value.clienId">{{this.form.value.clienId}}</li>
-                        <li *ngIf="!this.form.value.clienId">Id aun no inicializado</li>
+                        <li *ngIf="this.form.value.clinId">{{this.form.value.cliId}}</li>
+                        <li *ngIf="!this.form.value.cliId">Id aun no inicializado</li>
                     </ul>
                 </div>
 
                 <div>
                     <label>Fecha de Alta</label>
                     <ul>
-                        <li *ngIf="this.form.value.clienFechaAlta">{{this.form.value.clienFechaAlta | date: 'dd-LL-yyyy'}}
+                        <li *ngIf="this.form.value.cliFechaAlta">{{this.form.value.cliFechaAlta | date: 'DD/MM/AA'}}
                         </li>
                         <li *ngIf="!this.form.value.clienFechaAlta">Fecha aun no inicializada</li>
                     </ul>
@@ -72,7 +72,7 @@
                 <div>
                     <mat-form-field appearance="outline">
                         <mat-label>Nombre</mat-label>
-                        <input matInput formControlName="clienNombre" required>
+                        <input matInput formControlName="cliNombre" required>
                         <mat-error>El campo no puede ser vacio</mat-error>
                     </mat-form-field>
                 </div>
@@ -80,7 +80,7 @@
                 <div>
                     <mat-form-field appearance="outline">
                         <mat-label>Dirección</mat-label>
-                        <input matInput formControlName="clienDireccion" required>
+                        <input matInput formControlName="cliDireccion" required>
                         <mat-error>El campo no puede ser vacio</mat-error>
                     </mat-form-field>
                 </div>

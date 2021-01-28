@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ConfirmarComponent } from '../confirmar/confirmar.component';
+import { GlobalService } from '../shared/global.service';
 import { PedidoDetalle } from '../shared/pedido-detalle';
 import { PedidoDetalleService } from '../shared/pedido-detalle.service';
 import { Producto } from '../shared/producto';
@@ -14,14 +15,13 @@ import { ProductoService } from '../shared/producto.service';
   templateUrl: './pedido-detalle.component.html',
   styleUrls: ['./pedido-detalle.component.css']
 })
-export class PedidoDetalleComponent implements OnInit {
+export class PedidoDetallesComponent implements OnInit {
 
   @Input() pediId!: number;
 
-  detalles: PedidoDetalle[] = [];
   seleccionado = new PedidoDetalle();
 
-  columnas: string[] = ['prodDescripcion', 'detaCantidad', 'detaPrecio', 'acciones'];
+  columnas: string[] = ['detaId', 'prodDescripcion', 'detaCantidad', 'detaPrecio', 'acciones'];
   dataSource = new MatTableDataSource<PedidoDetalle>();
 
 
@@ -30,8 +30,11 @@ export class PedidoDetalleComponent implements OnInit {
 
   productos: Producto[] = [];
 
+  detaIdNuevos = -1;
 
-  constructor(private pedidoDetalleService: PedidoDetalleService,
+
+  constructor(public global: GlobalService,
+    private pedidoDetalleService: PedidoDetalleService,
     private productoService: ProductoService,
     private formBuilder: FormBuilder,
     public dialog: MatDialog) { }
@@ -50,12 +53,12 @@ export class PedidoDetalleComponent implements OnInit {
       prodDescripcion: ['']
     });
 
-    this.pedidoDetalleService.get(this.pediId).subscribe(
-      (pedidoDetalles) => {
-        this.detalles = pedidoDetalles;
+    this.pedidoDetalleService.get(`detaPediId=${this.pediId}`)
+      .subscribe((pedidoDetalles) => {
+        this.global.items = pedidoDetalles;
         this.actualizarTabla();
       }
-    );
+      );
 
     this.productoService.get().subscribe(
       (productos) => {
@@ -65,12 +68,16 @@ export class PedidoDetalleComponent implements OnInit {
   }
 
   actualizarTabla() {
-    this.dataSource.data = this.detalles;
+    this.dataSource.data = this.global.items.filter(x => x.detaBorrado == false);
   }
 
   agregar() {
-    this.form.reset();
+
+    this.detaIdNuevos--;
     this.seleccionado = new PedidoDetalle();
+    this.seleccionado.detaId = this.detaIdNuevos;
+
+    this.form.setValue(this.seleccionado);
     this.mostrarFormulario = true;
   }
 
@@ -82,13 +89,8 @@ export class PedidoDetalleComponent implements OnInit {
       console.log(`Dialog result: ${result}`);
 
       if (result) {
-        this.pedidoDetalleService.delete(row.detaId)
-          .subscribe(() => {
-
-            this.detalles = this.detalles.filter(x => x !== row);
-
-            this.actualizarTabla();
-          });
+        row.detaBorrado = true;
+        this.actualizarTabla();
       }
     });
   }
@@ -98,13 +100,13 @@ export class PedidoDetalleComponent implements OnInit {
     this.seleccionado = seleccionado;
 
     this.form.setValue(seleccionado);
-/*
-    this.form.setValue({
-      detaProdId: seleccionado.detaProdId,
-      detaCantidad: seleccionado.detaCantidad,
-      detaPrecio: seleccionado.detaPrecio
-    });
-*/
+    /* si el form tiene menos campos que el objeto seleccionado...
+        this.form.setValue({
+          detaProdId: seleccionado.detaProdId,
+          detaCantidad: seleccionado.detaCantidad,
+          detaPrecio: seleccionado.detaPrecio
+        });
+    */
   }
 
   guardar() {
@@ -114,26 +116,19 @@ export class PedidoDetalleComponent implements OnInit {
 
     Object.assign(this.seleccionado, this.form.value);
 
+    // si el formulario es diferente asignar uno por uno...
+    //this.seleccionado.prodDescripcion = this.form.value.prodDescripcion;
+    //this.seleccionado.prodPrecio = this.form.value.prodPrecio;
 
-    if (this.seleccionado.detaId) {
-      this.pedidoDetalleService.put(this.seleccionado)
-        .subscribe((pedidoDetalle) => {
-          this.mostrarFormulario = false;
-        });
+    // actualizo descripcion para que se vea en la grilla
+    this.seleccionado.prodDescripcion = this.productos.find(c => c.prodId == this.seleccionado.detaProdId)!.prodDescripcion;
 
-    } else {
-      this.seleccionado.detaPediId = this.pediId;
+    // para que sea mas facil, lo borro y agrego de nuevo
+    this.global.items = this.global.items.filter(x => x.detaId != this.seleccionado.detaId);
+    this.global.items.push(this.seleccionado);
 
-      this.pedidoDetalleService.post(this.seleccionado)
-        .subscribe((pedidoDetalle: PedidoDetalle) => {
-
-          pedidoDetalle.prodDescripcion = this.productos.find(c => c.prodId == pedidoDetalle.detaProdId)!.prodDescripcion;
-          this.detalles.push(pedidoDetalle);
-          this.mostrarFormulario = false;
-          this.actualizarTabla();
-        });
-
-    }
+    this.mostrarFormulario = false;
+    this.actualizarTabla();
 
   }
   cancelar() {

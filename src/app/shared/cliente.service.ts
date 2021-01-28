@@ -1,13 +1,31 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { ApiService } from '../core/api-service';
+import { AppConfigService } from '../core/config.service';
 
 import { Cliente } from './cliente';
 
 @Injectable({
   providedIn: 'root'
 })
+export class ClienteService
+  extends ApiService<Cliente>{
+  constructor(
+    protected http: HttpClient,
+    protected app: AppConfigService
+  ) {
+    super("cliente.php", http, app);
+  }
+}
+
+
+
+
+
+
+
+/*
 export class ClienteService {
 
   private url = 'http://localhost:8888/cliente.php';
@@ -46,3 +64,4 @@ export class ClienteService {
     return of([]);
   }
 }
+*/

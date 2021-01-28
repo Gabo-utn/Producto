@@ -1,25 +1,23 @@
-import { AfterViewInit, Component, NgModule, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ConfirmarComponent } from '../confirmar/confirmar.component';
 import { Cliente } from '../shared/cliente';
 import { ClienteService } from '../shared/cliente.service';
+import { GlobalService } from '../shared/global.service';
 import { Pedido } from '../shared/pedido';
+import { PedidoDetalleService } from '../shared/pedido-detalle.service';
 import { PedidoService } from '../shared/pedido.service';
-import { MatPaginator } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-pedidos',
   templateUrl: './pedidos.component.html',
   styleUrls: ['./pedidos.component.css']
 })
-//@NgModule(){
-//  imports:[
-//    MatPaginatorModule ]
-//}
-
 export class PedidosComponent implements OnInit, AfterViewInit {
 
   items: Pedido[] = [];
@@ -38,17 +36,18 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   constructor(private pedidoService: PedidoService,
     private clienteService: ClienteService,
+    private pedidoDetalleService : PedidoDetalleService,
+    private global: GlobalService,
     private formBuilder: FormBuilder,
     public dialog: MatDialog) { }
 
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!:MatPaginator
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
-
 
   ngOnInit(): void {
 
@@ -73,14 +72,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
         this.clientes = clientes;
       }
     )
-  }
-  mostrar = false;
-  mostrarDetalle():Boolean{
-    if(this.seleccionado.pediId){
-      return this.mostrar = true;
-    }else{
-      return this.mostrar = false;
-    }
   }
 
   actualizarTabla() {
@@ -130,29 +121,54 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     }
 
     Object.assign(this.seleccionado, this.form.value);
+    // si el formulario es diferente asignar uno por uno...
+    //this.seleccionado.prodDescripcion = this.form.value.prodDescripcion;
+    //this.seleccionado.prodPrecio = this.form.value.prodPrecio;
 
 
-
+    // actualizo el nombre para que se vea en la grilla
+    this.seleccionado.clienNombre =this.clientes.find(c => c.clienId == this.seleccionado.pediClienId)!.clienNombre;
 
     if (this.seleccionado.pediId) {
       this.pedidoService.put(this.seleccionado)
         .subscribe((pedido) => {
-          this.mostrarFormulario = false;
+          this.actualizarDetalle(pedido.pediId);
         });
 
     } else {
       this.pedidoService.post(this.seleccionado)
         .subscribe((pedido: Pedido) => {
-          pedido.clienNombre = this.clientes.find(c => c.clienId == pedido.pediClienId)!.clienNombre;
+          // solo para que se vea en la grilla
+          pedido.clienNombre = this.seleccionado.clienNombre;
           this.items.push(pedido);
-          this.mostrarFormulario = false;
-          this.actualizarTabla();
+          this.actualizarDetalle(pedido.pediId);
+
         });
 
     }
 
   }
   cancelar() {
+    this.mostrarFormulario = false;
+  }
+
+  actualizarDetalle(pediId:number){
+    this.global.items.forEach( (i)=>{
+      i.detaPediId = pediId;
+      if (i.detaBorrado){
+        this.pedidoDetalleService.delete(i.detaId).subscribe();
+      }
+
+      if (i.detaId < 0){
+        this.pedidoDetalleService.post(i).subscribe();
+      }
+
+      if (i.detaId > 0){
+        this.pedidoDetalleService.put(i).subscribe();
+      }
+    });
+
+    this.actualizarTabla();
     this.mostrarFormulario = false;
   }
 

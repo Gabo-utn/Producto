@@ -1,17 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
 
-
+import { ApiService } from '../core/api-service';
+import { AppConfigService } from '../core/config.service';
 import { Producto } from './producto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductoService {
+export class ProductoService
+extends ApiService<Producto>{
+  path = "producto.php";
+  constructor(
+    protected http: HttpClient,
+    protected app: AppConfigService
+  ) {
+    super("producto.php", http, app);
+  }
 
-  private url = 'http://localhost:8888/producto.php';
+
+}
+  /*private url = 'http://localhost:8888/producto.php';
   constructor(
     private http: HttpClient
   ) { }
@@ -44,4 +53,4 @@ export class ProductoService {
     return of([]);
   }
 
-}
+*/
